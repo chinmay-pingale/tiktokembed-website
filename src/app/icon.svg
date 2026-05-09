@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none">
+  <style>
+    .ic { stroke: #0A0A0A; fill: #0A0A0A; }
+    @media (prefers-color-scheme: dark) {
+      .ic { stroke: #FAFAFA; fill: #FAFAFA; }
+    }
+  </style>
+  <path class="ic" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M 8 8 L 3 16 L 8 24" />
+  <path class="ic" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M 24 8 L 29 16 L 24 24" />
+  <rect class="ic" fill="none" x="13" y="9" width="6" height="14" rx="2.5" stroke-width="2.5" />
+</svg>
