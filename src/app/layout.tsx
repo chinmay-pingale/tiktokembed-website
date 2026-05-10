@@ -13,7 +13,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://tiktokembed.harloop.com";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "TikTok Embed — Get embed code from any TikTok link",
   description:
     "TikTok Embed is a free tool to grab clean, copy-paste embed HTML from any TikTok video. Paste a link, copy the code, drop it in your site. Built by harloop.",
@@ -24,9 +28,10 @@ export const metadata: Metadata = {
       "Paste any TikTok link to get clean, copy-paste embed HTML. Free tool by harloop.",
     siteName: "TikTok Embed",
     type: "website",
+    url: siteUrl,
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "TikTok Embed — Get embed code from any TikTok link",
     description:
       "Paste any TikTok link to get clean, copy-paste embed HTML. Free tool by harloop.",

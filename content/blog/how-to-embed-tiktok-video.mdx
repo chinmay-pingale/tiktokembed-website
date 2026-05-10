@@ -1,0 +1,115 @@
+---
+title: "How to Embed a TikTok Video on Your Website (2026 Guide)"
+description: "Three ways to embed a TikTok video on your website in 2026. Step-by-step instructions, anatomy of the embed code, and where to paste it across platforms."
+date: "2026-05-09"
+keywords: "tiktok embed, how to embed tiktok, embed tiktok video, tiktok embed code, embed tiktok website"
+draft: false
+---
+
+You found a TikTok you want to share — a customer review, a product demo, a moment that does the talking better than any paragraph you'd write. Embedding it on your website lets visitors watch the actual TikTok player without leaving your page, and it does so with the original creator's branding intact.
+
+This guide covers the three ways to embed a TikTok video on your site, what the embed code is actually doing under the hood, and where to paste it depending on your platform.
+
+## What is a TikTok embed?
+
+A TikTok embed is a small piece of HTML that turns any TikTok video URL into a playable iframe inside your page. The video is hosted on TikTok's servers, the player is loaded from TikTok's CDN, and your page just declares which video to show.
+
+That distinction matters. An embed is not:
+
+- A screenshot or thumbnail (which can't be played).
+- A direct video file you host yourself (which would be a copyright issue and a bandwidth nightmare).
+- A link "out" to TikTok (which loses the visitor).
+
+It's the actual TikTok player, embedded inside your page. The original creator stays attributed, the video plays in TikTok's native UI, and your visitor stays on your domain.
+
+## Method 1: Use TikTok's official share button
+
+The most direct path uses TikTok itself.
+
+1. Open the TikTok video on the web at `https://www.tiktok.com/@username/video/...`.
+2. Click the **Share** button on the right side of the video.
+3. Choose **Embed**.
+4. Click **Copy code**.
+5. Paste that HTML wherever you want the video to appear on your site.
+
+What you'll get is a `<blockquote class="tiktok-embed">` element followed by a `<script>` tag pointing at TikTok's `embed.js`. The script hydrates the blockquote into the playable iframe once the page loads.
+
+This works, but it's slow if you do it more than once. Three clicks per video, plus copy and paste, plus making sure you didn't accidentally include the wrong link. If you embed TikToks regularly — for a blog roundup, a customer-stories page, a content calendar — there's a faster path.
+
+## Method 2: One-click with our free tool
+
+[The TikTok Embed Tool](/) is built for this. Paste the TikTok URL into the input box, click Get Code, and you get the same official embed HTML, ready to copy.
+
+It uses TikTok's official oEmbed API under the hood, so the output is the blessed format that TikTok's own player expects. You're not relying on a parsed-and-reconstructed approximation — you're getting the format TikTok publishes.
+
+A couple of small wins over the manual route:
+
+- **No login required.** TikTok occasionally walls off the share button behind a sign-in. The tool works for any public video.
+- **A live preview.** You see the embed render before you copy it, so you know it's working.
+- **Mobile and desktop preview.** Toggle between the two widths to confirm the embed will look right on both before you commit it to your CMS.
+
+## Method 3: Build the embed manually (advanced)
+
+If you want full control — say you're embedding videos at scale via a CMS template — you can construct the embed yourself. The format is:
+
+```html
+<blockquote class="tiktok-embed"
+  cite="https://www.tiktok.com/@USERNAME/video/VIDEO_ID"
+  data-video-id="VIDEO_ID"
+  style="max-width: 605px; min-width: 325px;">
+  <section>
+    <a target="_blank" href="https://www.tiktok.com/@USERNAME">@USERNAME</a>
+  </section>
+</blockquote>
+<script async src="https://www.tiktok.com/embed.js"></script>
+```
+
+Replace `USERNAME` and `VIDEO_ID` with the values from the TikTok URL. The `cite` attribute is the canonical URL of the video; `data-video-id` is the numeric ID at the end of the URL.
+
+The `<section>` block with the `<a>` tag is the unhydrated fallback — what visitors see before the script loads (and what crawlers see for SEO purposes). Don't strip it.
+
+The `<script>` tag at the bottom is what actually swaps the blockquote for the player. You only need to include it once per page, no matter how many embeds you have.
+
+## Where to paste the code
+
+The destination depends on your platform.
+
+**Plain HTML.** Drop the snippet directly inside the `<body>` wherever you want the video to appear. The `<script>` only needs to appear once per page, so if you have multiple embeds, include their blockquotes and add a single `<script>` tag at the end.
+
+**WordPress.** In the block editor, add a **Custom HTML** block and paste the embed code. In the classic editor, switch to the Text/HTML view and paste it there. Don't paste into the visual editor — WordPress will escape the HTML and the embed won't work.
+
+**Shopify.** Open your theme's HTML editor (Online Store → Themes → Edit code). Paste the embed inside a `.liquid` template, a section, or a page's content via a "Custom Liquid" block.
+
+**Webflow.** Use an **Embed** element. Paste the embed code into the Embed component's HTML field, then publish.
+
+**Squarespace.** Use a **Code Block** in the page editor. Make sure "Display Source" is unchecked so the HTML renders.
+
+**Notion / Substack / similar.** Most rich-text-only platforms don't allow custom embed scripts. You'll need to use their TikTok-specific block (paste the URL alone) or fall back to a screenshot link.
+
+## What the embed code is actually doing
+
+A TikTok embed is two pieces working together:
+
+1. **The blockquote.** A semantic placeholder describing the video to crawlers and unhydrated browsers. The class `tiktok-embed` is a hook for the script to find it.
+2. **The script.** An async JavaScript bundle from `https://www.tiktok.com/embed.js`. It scans the page for `.tiktok-embed` blockquotes, reads each one's `data-video-id`, and replaces the blockquote with an `<iframe>` pointing at TikTok's player.
+
+The `max-width: 605px; min-width: 325px` inline style on the blockquote tells the script how wide to render the iframe. If you want a smaller mobile-style preview, edit `max-width` to `325px` before pasting.
+
+For the full developer reference, including the supported attributes and accessibility hooks, see [TikTok's official embed docs](https://developers.tiktok.com/doc/embed-videos/).
+
+## Common pitfalls
+
+A few things that trip people up:
+
+- **Pasting only the blockquote and forgetting the script.** Without the script, the page just shows the fallback `<a>` link, not the player.
+- **Stripping the inline style.** Some CMSs sanitize inline `style` attributes. Without them, the iframe has no width and renders as a 0-pixel block.
+- **Using a TikTok user URL instead of a video URL.** The tool needs a URL that includes `/video/` and a numeric ID — not just a profile link.
+- **Embedding a private or removed video.** The blockquote will show but the iframe will fail to load. Confirm the video is public and live before embedding.
+
+If your embed isn't rendering, the troubleshooting guide walks through five common causes: [TikTok Embed Not Working? 5 Common Causes (and Fixes)](/blog/tiktok-embed-not-working).
+
+## Wrapping up
+
+The fastest, most reliable path is Method 2 — paste the URL into [the embed tool](/), copy the code, drop it into your page. You're using TikTok's official format, you can preview it before you commit, and there's no login required.
+
+If you're not sure embedding TikTok videos is worth the effort, we made the case for it here: [Why Embed TikTok Videos on Your Website? 6 Real Benefits](/blog/benefits-of-embedding-tiktok-videos).

@@ -1,0 +1,110 @@
+---
+title: "TikTok Embed Not Working? 5 Common Causes (and Fixes)"
+description: "If your TikTok embed isn't rendering, here are the 5 most common causes — wrong URL, missing script, CSS conflicts, privacy, ad-blockers — and how to fix each."
+date: "2026-05-05"
+keywords: "tiktok embed not working, tiktok embed broken, tiktok embed blank, fix tiktok embed, tiktok embed not loading"
+draft: false
+---
+
+You pasted the TikTok embed code, deployed your page, and… nothing. A blank box, a flash of unstyled fallback text, or just an unbranded gray rectangle.
+
+Almost every broken TikTok embed comes down to one of five causes. Here's how to identify and fix each.
+
+## 1. The URL format is wrong
+
+TikTok's embed only works with **video URLs** — not profile URLs, not search-result URLs, not the home feed.
+
+A valid TikTok video URL looks like one of these:
+
+```
+https://www.tiktok.com/@username/video/7137423965982719237
+https://vm.tiktok.com/ZMxxxxxxx/
+https://www.tiktok.com/t/ZTxxxxxxx/
+```
+
+The first format is the canonical one — username plus a numeric `/video/<ID>` segment. The other two are short links that TikTok generates for sharing; both resolve to the canonical format when expanded.
+
+If you started with a URL that doesn't have `/video/` in it (like a profile or hashtag page), the embed won't render. Open the actual video in TikTok's web player and copy that URL instead.
+
+When in doubt, paste the URL into [the embed tool](/) — it validates the URL before generating the code, so a bad URL gives you an explicit error rather than a silent failure.
+
+## 2. The `embed.js` script isn't loading
+
+A TikTok embed is two pieces: a `<blockquote class="tiktok-embed">` placeholder and a `<script async src="https://www.tiktok.com/embed.js">` that swaps the placeholder for an iframe. If the script doesn't load, you only get the fallback — usually just a small text link to the original video.
+
+Three reasons the script might not load:
+
+**You forgot to paste it.** Paste the entire snippet, including the `<script>` tag at the end. If you have multiple embeds on one page, you only need one `<script>` tag total — but you do need at least one.
+
+**Your CMS stripped it.** Some content systems sanitize HTML and remove `<script>` tags by default. WordPress's classic visual editor does this; some Squarespace templates do too. Use a code/embed block specifically designed to allow scripts.
+
+**The script is being blocked at the network layer.** Open your browser's DevTools, switch to the Network tab, and reload the page. If the request to `embed.js` shows red (blocked, failed, 4xx, 5xx), the issue is between the visitor's browser and TikTok — most often an ad-blocker or CSP rule (covered below).
+
+## 3. Container CSS is interfering
+
+The TikTok embed expects to render at a specific width, governed by the inline style on the blockquote: `max-width: 605px; min-width: 325px`. If your site's CSS overrides those constraints — typically with rules that target `iframe` or `blockquote` globally — the embed can collapse to zero width or stretch in awkward ways.
+
+A few specific culprits:
+
+- A global `iframe { width: 100%; }` rule that fights the embed's inline width.
+- A `blockquote { display: none }` rule (rare, but exists in some reset stylesheets).
+- A parent container with `overflow: hidden` and a height of 0.
+- A flex parent with no explicit `align-items` causing the iframe to render with 0 height.
+
+**To diagnose:** open DevTools, inspect the iframe element after the page loads, and check its computed width and height. If either is 0, walk up the parent chain looking for the rule that's collapsing it.
+
+**To fix:** scope the embed inside a wrapping `<div>` with explicit width and reset styles:
+
+```html
+<div style="max-width: 605px; margin: 0 auto;">
+  <!-- TikTok embed code here -->
+</div>
+```
+
+This isolates the embed from your global CSS and gives the script a clean container to work with.
+
+## 4. The video is private, region-locked, or removed
+
+If the embed code is correct, the script loads, and your CSS isn't fighting it — but the iframe still shows a blank box or "video unavailable" — the video itself is the problem.
+
+TikTok embeds can fail to play because:
+
+- **The video was deleted or made private** by the creator after you grabbed the embed code. The embed will still render, but the iframe loads an error page.
+- **The video is region-locked.** Some TikToks are restricted to specific countries; visitors outside those regions see a blank player.
+- **The creator's account is suspended.** All embeds for that account stop working until the suspension is lifted.
+
+**To verify:** click through the `cite` URL in the embed code (it's the link to the original video on TikTok). If TikTok itself shows "Video currently unavailable" or a 404, the problem is on TikTok's side, not yours.
+
+The only fix is to swap in a different video. If you embed customer-generated content, build a process for occasionally re-checking your embeds — videos disappear over time.
+
+## 5. Ad-blockers, browser extensions, or strict CSP
+
+The final category is requests blocked at the visitor's browser, not at your server.
+
+**Ad-blockers and privacy extensions** sometimes treat TikTok's embed scripts as trackers and block them. Visitors with strict uBlock Origin rules, Brave's shields, or Firefox's enhanced tracking protection may see the fallback link instead of the player. There's no fix from your side — the visitor has to allow the script. Most users won't, so a small fraction of your audience will always see the unhydrated fallback. That's expected.
+
+**Content Security Policy (CSP) headers** on your own site can block the embed if you haven't allow-listed TikTok's domains. The embed needs at minimum:
+
+```
+script-src https://*.tiktok.com;
+frame-src https://*.tiktok.com;
+img-src https://*.tiktok.com https://*.tiktokcdn.com;
+```
+
+If you've configured a strict CSP and the embed isn't loading, check your browser's console for CSP violation messages — they'll tell you exactly which directive needs the addition.
+
+## How to verify your embed is working
+
+A quick three-step check before you ship:
+
+1. **Generate the code** by pasting the TikTok URL into [the embed tool](/). The tool's preview shows you the actual rendered iframe — if it works there, the code itself is correct.
+2. **Paste it into a clean test page.** Create an empty `index.html` with just `<!DOCTYPE html>`, a `<body>`, and the embed code. Open it in a browser. If it works in isolation but breaks on your real page, the issue is your page's CSS or scripts — go back to cause 3 or 5 above.
+3. **Test in an incognito window.** This rules out browser extensions and cached state. If the embed works in incognito but not in your normal browser, an extension is blocking it.
+
+## Wrapping up
+
+Most broken TikTok embeds are mundane — a wrong URL, a missing script tag, a CSS rule that shouldn't exist. The fancy causes (CSP, region locks, account suspensions) are rarer than they sound.
+
+If you've worked through all five and still can't get the embed to render, generate fresh code with [the embed tool](/) and paste it into a minimal test page. Comparing what works there against what doesn't on your real page is the fastest way to isolate the cause.
+
+For a refresher on what each part of the embed code is actually doing, see [How to Embed a TikTok Video on Your Website (2026 Guide)](/blog/how-to-embed-tiktok-video).

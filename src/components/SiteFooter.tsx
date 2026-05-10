@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function SiteFooter() {
   const year = new Date().getFullYear();
   return (
@@ -5,6 +7,12 @@ export default function SiteFooter() {
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-3 px-6 py-8 text-sm text-[color:var(--color-muted)] sm:flex-row sm:px-8">
         <span>© {year} TikTok Embed</span>
         <div className="flex items-center gap-6">
+          <Link
+            href="/blog"
+            className="transition-colors hover:text-foreground"
+          >
+            Blog
+          </Link>
           <span>
             Built by{" "}
             <a

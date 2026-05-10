@@ -13,6 +13,12 @@ export default function SiteNav() {
           <Logo />
         </Link>
         <nav className="flex items-center gap-6 text-sm">
+          <Link
+            href="/blog"
+            className="text-[color:var(--color-muted)] transition-colors hover:text-foreground"
+          >
+            Blog
+          </Link>
           <span className="text-[color:var(--color-muted)]">
             by{" "}
             <a
