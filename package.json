@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@next/third-parties": "^16.2.6",
     "@types/prismjs": "^1.26.6",
     "next": "16.2.5",
     "prismjs": "^1.30.0",
