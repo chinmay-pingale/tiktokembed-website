@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://tiktokembed.harloop.com";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://tiktokembed.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

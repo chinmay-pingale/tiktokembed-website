@@ -9,7 +9,7 @@ import { formatPostDate, getAllPosts, getPost, readingTime } from "@/lib/blog";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-  "https://tiktokembed.harloop.com";
+  "https://tiktokembed.com";
 
 type Params = Promise<{ slug: string }>;
 
